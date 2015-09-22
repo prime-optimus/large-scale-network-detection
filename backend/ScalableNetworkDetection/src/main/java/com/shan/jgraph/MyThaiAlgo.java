@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 
 import sun.text.normalizer.UBiDiProps;
 import jxl.read.biff.BiffException;

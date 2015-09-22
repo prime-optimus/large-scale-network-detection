@@ -41,15 +41,15 @@ public class MakeAdjacencyListFromMatrix {
 
 		  passes = new ArrayList<Edge>();
 	    	  for (int i = 1;i < 15;i++){
-	    		  int NodeA = Integer.parseInt(sheet.getCell(j, 0).getContents());
-	    		  int NodeB = Integer.parseInt(sheet.getCell(0,i).getContents());
+	    		  String NodeA = sheet.getCell(j, 0).getContents();
+	    		  String NodeB = sheet.getCell(0,i).getContents();
 	    		  String weight = sheet.getCell(i,j).getContents();
 	    		  if (!weight.isEmpty() && !weight.contains("-")){
-	    			  passes.add(new Edge(new Node(NodeA), new Node(NodeB),Integer.parseInt(weight)));
+	    			  passes.add(new Edge(new Node(NodeA), new Node(NodeB),weight));
 	    			  //edgesAdjacencyList.put(String.valueOf(NodeA), String.valueOf(NodeB));
 	    			  bw.write(String.valueOf(NodeA) + " " + String.valueOf(NodeB)+"\n");
 	    		  } else {
-	    			  passes.add(new Edge(new Node(NodeA), new Node(NodeB),0));
+	    			  passes.add(new Edge(new Node(NodeA), new Node(NodeB),"0"));
 	    		  }
 	    	  }
 	    	  listOfNodes.add(passes);

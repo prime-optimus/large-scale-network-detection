@@ -14,7 +14,7 @@ public class FillGraph {
 
 		ArrayList<Node> listOfNodes = new ArrayList<Node>();
 		for(int i = 0 ;i < 6;i++){
-			listOfNodes.add(new Node(i+1));
+			listOfNodes.add(new Node(String.valueOf(i+1)));
 		}
 		g1.fillAdjacencyList(listOfNodes.get(0), Arrays.asList(listOfNodes.get(1),listOfNodes.get(2),listOfNodes.get(3),listOfNodes.get(4),listOfNodes.get(5)));
 		g1.fillAdjacencyList(listOfNodes.get(1), Arrays.asList(listOfNodes.get(0),listOfNodes.get(2),listOfNodes.get(3),listOfNodes.get(4)));
