@@ -5,14 +5,14 @@ import java.util.List;
 
 public class Node {
 
-	String id;
-	String label;
-	Node(String id,String label){
+	int id;
+	int label;
+	Node(int id,int label){
 		this.id = id;
 		this.label = label;
 	}
 	
-	Node(String num){
+	Node(int num){
 		this.id = num;
 	}
 	
@@ -20,19 +20,19 @@ public class Node {
 		
 	}
 	
-	String getId(){
+	int getId(){
 		return this.id;
 	}
 	
-	String getLabel(){
+	int getLabel(){
 		return this.label;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	public void setLabel(String label) {
+	public void setLabel(int label) {
 		this.label = label;
 	}
 	

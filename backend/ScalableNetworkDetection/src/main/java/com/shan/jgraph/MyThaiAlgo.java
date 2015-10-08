@@ -17,6 +17,16 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 
+
+
+
+
+
+
+
+
+
+
 import sun.text.normalizer.UBiDiProps;
 import jxl.read.biff.BiffException;
 
@@ -144,23 +154,23 @@ public class MyThaiAlgo {
 		//GraphByAdjacencyMatrix g1 = new GraphByAdjacencyMatrix();
 		long startTime = System.currentTimeMillis();
 		GraphByAdjacencyList g1 = new GraphByAdjacencyList();
-		LinkedHashMap<String, ArrayList<String>> mapOfNodes = g1.getMapOfNodes();
-		LinkedHashMap<String,String> parents = new LinkedHashMap<String,String>();
+		LinkedHashMap<Integer, ArrayList<Integer>> mapOfNodes = g1.getMapOfNodes();
+		LinkedHashMap<Integer, Integer> parents = new LinkedHashMap<Integer,Integer>();
 		//System.out.println(mapOfNodes.size());
 		int d = 20;
-		ArrayList<String> leaders = new ArrayList<String>();
-		ArrayList<String> members = new ArrayList<String>();
-		ArrayList<String> orbiters = new ArrayList<String>();
+		ArrayList<Integer> leaders = new ArrayList<Integer>();
+		ArrayList<Integer> members = new ArrayList<Integer>();
+		ArrayList<Integer> orbiters = new ArrayList<Integer>();
 		ArrayList<Edge> listOfEdges = g1.getListOfEdges();
-		ArrayList<String> tempList;
-		for(Entry<String, ArrayList<String>> entry: mapOfNodes.entrySet()){
+		ArrayList<Integer> tempList;
+		for(Entry<Integer, ArrayList<Integer>> entry: mapOfNodes.entrySet()){
 			tempList = entry.getValue();
-			ListIterator<String> litr2 = tempList.listIterator();
+			ListIterator<Integer> litr2 = tempList.listIterator();
 			if(litr2.hasNext()) {
-				String startingNode = entry.getKey();
+				int startingNode = entry.getKey();
 				if(!leaders.contains(startingNode) && !members.contains(startingNode)) {
-					String endingNode = subtractListNodes(tempList, members);
-					if(!endingNode.isEmpty()){
+					int endingNode = subtractListNodes(tempList, members);
+					if(!(endingNode == 0)){
 						members.add(startingNode);
 						if(!leaders.contains(endingNode))
 						leaders.add(endingNode);						
@@ -178,18 +188,18 @@ public class MyThaiAlgo {
 		ArrayList<String> communities = new ArrayList<String>();
 		//System.out.println("Leaders");
 		int i = 0;
-		ListIterator<String> leadItr = leaders.listIterator();
-		ListIterator<String> memItr = members.listIterator();
-		ListIterator<String> orbItr = orbiters.listIterator();
+		ListIterator<Integer> leadItr = leaders.listIterator();
+		ListIterator<Integer> memItr = members.listIterator();
+		ListIterator<Integer> orbItr = orbiters.listIterator();
 		while(leadItr.hasNext()){			
-			String leader = leadItr.next();
+			Integer leader = leadItr.next();
 			communities.add("\t\t{\"name\":\""+leader+"\",\"group\":"+i+"},");
 			//System.out.println(leader);
 			i++;
 		}
 		//System.out.println("Members");
 		while(memItr.hasNext()){
-			String mNode = memItr.next();
+			Integer mNode = memItr.next();
 				String group = String.valueOf(leaders.indexOf(parents.get(mNode)));
 					communities.add("\t\t{\"name\":\""+mNode+"\",\"group\":"+group+"},");
 					//System.out.println(mNode);
@@ -198,7 +208,7 @@ public class MyThaiAlgo {
 		FileWriter fw = new FileWriter(new File("myfbnet.json"));
 		BufferedWriter bw = new BufferedWriter(fw);
 		while(orbItr.hasNext()){
-			String oNode = orbItr.next();
+			Integer oNode = orbItr.next();
 			String group = String.valueOf(leaders.indexOf(parents.get(parents.get(oNode))));
 			communities.add("\t\t{\"name\":\""+oNode+"\",\"group\":"+group+"},");
 			//System.out.println(oNode);
@@ -234,7 +244,7 @@ public class MyThaiAlgo {
 		// TODO Auto-generated method stub
 		ListIterator<Node> nodeLitr = listOfNodes.listIterator();
 		Node tempNode = null;
-		while(nodeLitr.hasNext() && !(tempNode = nodeLitr.next()).getId().equals(endingNode)){}
+		while(nodeLitr.hasNext() && !((tempNode = nodeLitr.next()).getId() == (endingNode))){}
 		return tempNode;
 	}
 
@@ -244,7 +254,7 @@ public class MyThaiAlgo {
 		int i = 0;
 		while(memIterator.hasNext()){
 			Node mNode = memIterator.next();
-			if(node.getId().equals(mNode.getId())){
+			if(node.getId() == (mNode.getId())){
 				return i;
 			}
 			i++;
@@ -252,13 +262,13 @@ public class MyThaiAlgo {
 		return -1;
 	}
 
-	private static String subtractListNodes(ArrayList<String> tempList,
-			ArrayList<String> members) {
-		String reduced = "";
-		ListIterator<String> litr = tempList.listIterator();
+	private static int subtractListNodes(ArrayList<Integer> tempList,
+			ArrayList<Integer> members) {
+		int reduced = 0;
+		ListIterator<Integer> litr = tempList.listIterator();
 		ArrayList<String> reducedTempList = new ArrayList<String>();
 		int i = 0;
-		String nextNode;
+		int nextNode;
 		while(litr.hasNext()){
 			nextNode = litr.next();
 			if(!members.contains(nextNode)){

@@ -18,7 +18,7 @@ import jxl.read.biff.BiffException;
 public class GraphByAdjacencyList {
 
 	LinkedHashMap<Integer,ArrayList<Integer>> mapOfStrings = new LinkedHashMap<Integer,ArrayList<Integer>>();
-	LinkedHashMap<String, ArrayList<String>> mapOfNodes = new LinkedHashMap<String, ArrayList<String>>();
+	LinkedHashMap<Integer, ArrayList<Integer>> mapOfNodes = new LinkedHashMap<Integer, ArrayList<Integer>>();
 	ArrayList<Node> listOfNodes = new ArrayList<Node>();
 	ArrayList<Edge> listOfEdges = new ArrayList<Edge>();
 	GraphByAdjacencyList() throws BiffException, IOException{
@@ -45,12 +45,12 @@ public class GraphByAdjacencyList {
 		  List<String> listOfStrings;
 		  while((line = br.readLine())!= null){
 			  listOfStrings = Arrays.asList(line.split(" "));
-			  Edge e = new Edge(new Node(listOfStrings.get(0)),new Node(listOfStrings.get(1)),"1");
+			  Edge e = new Edge(new Node(Integer.parseInt(listOfStrings.get(0))),new Node(Integer.parseInt(listOfStrings.get(1))),1);
 			  listOfEdges.add(e);
 			  if(!mapOfNodes.containsKey(listOfStrings.get(0))){
-				  ArrayList<String> adjacentNodes = new ArrayList<String>();
+				  ArrayList<Integer> adjacentNodes = new ArrayList<Integer>();
 				  adjacentNodes.add(listOfStrings.get(1));
-				  mapOfNodes.put(listOfStrings.get(0), adjacentNodes);
+				  mapOfNodes.put(Integer.parseInt(listOfStrings.get(0)), adjacentNodes);
 			  } else {
 				  mapOfNodes.get(listOfStrings.get(0)).add(listOfStrings.get(1));
 			  }
@@ -74,11 +74,11 @@ public class GraphByAdjacencyList {
 		setListOfEdges(g1.getListOfEdges());
 	}
 
-	public LinkedHashMap<String, ArrayList<String>> getMapOfNodes() {
+	public LinkedHashMap<Integer, ArrayList<Integer>> getMapOfNodes() {
 		return mapOfNodes;
 	}
 
-	public void setMapOfNodes(LinkedHashMap<String, ArrayList<String>> mapOfNodes) {
+	public void setMapOfNodes(LinkedHashMap<Integer, ArrayList<Integer>> mapOfNodes) {
 		this.mapOfNodes = mapOfNodes;
 	}
 

@@ -16,15 +16,15 @@ public class Edge {
 	public void setEndingNode(Node endingNode) {
 		this.endingNode = endingNode;
 	}
-	public String getEdgeWeight() {
+	public int getEdgeWeight() {
 		return edgeWeight;
 	}
-	public void setEdgeWeight(String edgeWeight) {
+	public void setEdgeWeight(int edgeWeight) {
 		this.edgeWeight = edgeWeight;
 	}
 	Node endingNode;
-	String edgeWeight;
-	Edge(Node NodeA,Node NodeB, String weight){
+	int edgeWeight;
+	Edge(Node NodeA,Node NodeB, int weight){
 		this.startingNode = NodeA;
 		this.endingNode = NodeB;
 		this.edgeWeight = weight;
