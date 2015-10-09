@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 
 
 
+
+
 import sun.text.normalizer.UBiDiProps;
 import jxl.read.biff.BiffException;
 
@@ -185,23 +187,34 @@ public class MyThaiAlgo {
 		
 		}
 		
-		ArrayList<String> communities = new ArrayList<String>();
+		Map<Integer,ArrayList<Integer>> communities = new HashMap<Integer,ArrayList<Integer>>();
 		//System.out.println("Leaders");
 		int i = 0;
 		ListIterator<Integer> leadItr = leaders.listIterator();
 		ListIterator<Integer> memItr = members.listIterator();
 		ListIterator<Integer> orbItr = orbiters.listIterator();
+		ArrayList<Integer> nodesInCommunity;
 		while(leadItr.hasNext()){			
 			Integer leader = leadItr.next();
-			communities.add("\t\t{\"name\":\""+leader+"\",\"group\":"+i+"},");
+			nodesInCommunity = new ArrayList<Integer>();
+			nodesInCommunity.add(leader);
+			//communities.add("\t\t{\"name\":\""+leader+"\",\"group\":"+i+"},");
+			communities.put(i, nodesInCommunity);
 			//System.out.println(leader);
 			i++;
 		}
 		//System.out.println("Members");
 		while(memItr.hasNext()){
 			Integer mNode = memItr.next();
-				String group = String.valueOf(leaders.indexOf(parents.get(mNode)));
-					communities.add("\t\t{\"name\":\""+mNode+"\",\"group\":"+group+"},");
+				int group = leaders.indexOf(parents.get(mNode));
+				if(communities.containsKey(group)){
+					nodesInCommunity = communities.get(group);					
+				}	else{
+					nodesInCommunity = new ArrayList<Integer>();
+				}
+				nodesInCommunity.add(mNode);
+				communities.put(group, nodesInCommunity);
+					//communities.add("\t\t{\"name\":\""+mNode+"\",\"group\":"+group+"},");
 					//System.out.println(mNode);
 		}
 		//System.out.println("Orbiters");
@@ -209,18 +222,29 @@ public class MyThaiAlgo {
 		BufferedWriter bw = new BufferedWriter(fw);
 		while(orbItr.hasNext()){
 			Integer oNode = orbItr.next();
-			String group = String.valueOf(leaders.indexOf(parents.get(parents.get(oNode))));
-			communities.add("\t\t{\"name\":\""+oNode+"\",\"group\":"+group+"},");
+			int group = leaders.indexOf(parents.get(parents.get(oNode)));
+			if(communities.containsKey(group)){
+				nodesInCommunity = communities.get(group);					
+			}	else{
+				nodesInCommunity = new ArrayList<Integer>();
+			}
+			nodesInCommunity.add(oNode);
+			communities.put(group, nodesInCommunity);
+			//communities.add("\t\t{\"name\":\""+oNode+"\",\"group\":"+group+"},");
 			//System.out.println(oNode);
 		}
-		ListIterator<String> commItr = communities.listIterator();
 		//System.out.println("{");
 		//System.out.println("\t\"nodes\":[");
 		bw.write("{"+"\n");
 		bw.write("\t\"nodes\":["+"\n");
-		while(commItr.hasNext()){
+		for(Entry<Integer,ArrayList<Integer>>entry:communities.entrySet()){
 			//System.out.println("\t"+commItr.next());
-			bw.write("\t"+commItr.next()+"\n");
+			ListIterator<Integer> nodesInCommItr = entry.getValue().listIterator();
+			bw.write(entry.getKey() + "->");
+			while(nodesInCommItr.hasNext()){
+				bw.write(nodesInCommItr.next() + " ");
+			}
+			bw.write("\n");
 		}
 		//System.out.println("\t],");
 		//System.out.println("\t\"links\":[");
