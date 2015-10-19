@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import jxl.Sheet;
@@ -17,10 +18,10 @@ import jxl.read.biff.BiffException;
 
 public class GraphByAdjacencyList {
 
-	LinkedHashMap<Integer,ArrayList<Integer>> mapOfStrings = new LinkedHashMap<Integer,ArrayList<Integer>>();
-	LinkedHashMap<Integer, ArrayList<Integer>> mapOfNodes = new LinkedHashMap<Integer, ArrayList<Integer>>();
-	ArrayList<Node> listOfNodes = new ArrayList<Node>();
-	ArrayList<Edge> listOfEdges = new ArrayList<Edge>();
+	Map<Integer,ArrayList<Integer>> mapOfStrings = new LinkedHashMap<Integer,ArrayList<Integer>>();
+	Map<Integer, ArrayList<Integer>> mapOfNodes = new LinkedHashMap<Integer, ArrayList<Integer>>();
+	List<Integer> listOfNodes = new ArrayList<Integer>();
+	List<Edge> listOfEdges = new ArrayList<Edge>();
 	GraphByAdjacencyList() throws BiffException, IOException{
 		fillAdjacencyListByEdges();
 	}	
@@ -34,7 +35,7 @@ public class GraphByAdjacencyList {
 	private void graphAsListOfPairOfStrings() throws BiffException, IOException {
 		// TODO Auto-generated method stub
 
-		String filepath = "C:\\Users\\SHANDEMETZ\\Downloads\\Compressed\\facebook_combined.txt\\facebook_combined.txt";//new MakeAdjacencyListFromMatrix().getAdjacencyListFileName();
+		String filepath = "C:\\Users\\SHANDEMETZ\\Downloads\\Compressed\\facebook_combined.txt\\facebook_combined.txt";;
 		
 		
 		System.out.println(filepath);
@@ -43,38 +44,41 @@ public class GraphByAdjacencyList {
 		  String line;
 		  Node key;
 		  List<String> listOfStrings;
+		  ArrayList<Integer> adjacentNodes;
 		  while((line = br.readLine())!= null){
 			  listOfStrings = Arrays.asList(line.split(" "));
-			  Edge e = new Edge(new Node(Integer.parseInt(listOfStrings.get(0))),new Node(Integer.parseInt(listOfStrings.get(1))),1);
+			  int startingNode = Integer.parseInt(listOfStrings.get(0));
+			  int endingNode = Integer.parseInt(listOfStrings.get(1));
+			  Edge e = new Edge(new Node(startingNode),new Node(endingNode),1);
 			  listOfEdges.add(e);
-			  if(!mapOfNodes.containsKey(listOfStrings.get(0))){
-				  ArrayList<Integer> adjacentNodes = new ArrayList<Integer>();
-				  adjacentNodes.add(listOfStrings.get(1));
-				  mapOfNodes.put(Integer.parseInt(listOfStrings.get(0)), adjacentNodes);
+			  /*if(!mapOfNodes.containsKey(startingNode)){
+				  adjacentNodes = new ArrayList<Integer>();
+				  adjacentNodes.add(endingNode);
+				  mapOfNodes.put(startingNode, adjacentNodes);
 			  } else {
-				  mapOfNodes.get(listOfStrings.get(0)).add(listOfStrings.get(1));
+				  adjacentNodes = mapOfNodes.get(startingNode);
+				  adjacentNodes.add(endingNode);
+				  mapOfNodes.put(startingNode, adjacentNodes);
+			  }*/
+			  if(!listOfNodes.contains(startingNode)){
+				  listOfNodes.add(startingNode);
+			  }
+			  if(!listOfNodes.contains(endingNode)){
+				  listOfNodes.add(endingNode);
 			  }
 		  }
-		  /*for(Entry<Integer,ArrayList<Integer>> entry:mapOfStrings.entrySet()){
-			  System.out.println(entry.getKey());
-			  ListIterator<Integer> litr = entry.getValue().listIterator();
-			  while(litr.hasNext())
-				  System.out.print(litr.next() + " ");
-			  System.out.println();
-			  System.out.println();
-		  }*/
 	
 	}
 
 	private void graphAsNodesAndEdges() throws IOException {
 		// TODO Auto-generated method stub
-		String filepath = "C:\\Users\\SHANDEMETZ\\Downloads\\Compressed\\lesmis\\lesmis.gml";
+		String filepath = "C:\\Users\\SHANDEMETZ\\Downloads\\Compressed\\facebook_combined.txt\\facebook_combined.txt";
 		GMLReader g1 = new GMLReader(filepath);
-		setMapOfNodes(g1.getListOfConnectedNodes());
+		setListOfNodes(g1.getListOfNodesInInteger());
 		setListOfEdges(g1.getListOfEdges());
 	}
 
-	public LinkedHashMap<Integer, ArrayList<Integer>> getMapOfNodes() {
+	public Map<Integer, ArrayList<Integer>> getMapOfNodes() {
 		return mapOfNodes;
 	}
 
@@ -82,7 +86,7 @@ public class GraphByAdjacencyList {
 		this.mapOfNodes = mapOfNodes;
 	}
 
-	public ArrayList<Edge> getListOfEdges() {
+	public List<Edge> getListOfEdges() {
 		return listOfEdges;
 	}
 
@@ -90,7 +94,7 @@ public class GraphByAdjacencyList {
 		this.listOfEdges = listOfEdges;
 	}
 
-	public LinkedHashMap<Integer, ArrayList<Integer>> getMapOfStrings() {
+	public Map<Integer, ArrayList<Integer>> getMapOfStrings() {
 		return mapOfStrings;
 	}
 
@@ -99,12 +103,12 @@ public class GraphByAdjacencyList {
 		this.mapOfStrings = mapOfStrings;
 	}
 
-	public ArrayList<Node> getListOfNodes() {
+	public List<Integer> getListOfNodes() {
 		return listOfNodes;
 	}
 
-	public void setListOfNodes(ArrayList<Node> listOfNodes) {
-		this.listOfNodes = listOfNodes;
+	public void setListOfNodes(List<Integer> list) {
+		this.listOfNodes = list;
 	}
 
 }

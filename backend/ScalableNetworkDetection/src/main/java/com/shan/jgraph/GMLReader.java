@@ -7,13 +7,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map.Entry;
 
 public class GMLReader {
 	ArrayList<Edge> listOfEdges = new ArrayList<Edge>();
-	LinkedHashMap<Integer,ArrayList<Integer>> listOfConnectedNodes = new LinkedHashMap<Integer,ArrayList<Integer>>();
-	ArrayList<Node> listOfNodes = new ArrayList<Node>();
+	//LinkedHashMap<Integer,ArrayList<Integer>> listOfConnectedNodes = new LinkedHashMap<Integer,ArrayList<Integer>>();
+	List<Integer> listOfNodesInInteger = new ArrayList<Integer>();
+	List<Node> listOfNodes = new ArrayList<Node>();
 	public GMLReader(String filepath) throws IOException {
 		// TODO Auto-generated constructor stub
 		readGMLToHashMap(filepath);
@@ -52,13 +54,13 @@ public class GMLReader {
 		}
 		//System.out.println("end");
 		
-		ListIterator<Edge> litr = listOfEdges.listIterator();
-		ArrayList<Node> connectedNodes;
+		ListIterator<Node> litr = listOfNodes.listIterator();
 		while(litr.hasNext()){
-			Edge e = litr.next();
-			Node node1 = e.getStartingNode();
-			Node node2 = e.getEndingNode();
-			containsNode(listOfConnectedNodes, node1, node2);
+			Node n = litr.next();
+			//containsNode(listOfConnectedNodes, node1, node2);
+			if(!listOfNodesInInteger.contains(n.getId())){
+				listOfNodesInInteger.add(n.getId());
+			}
 		}
 		/*for(Entry<Node,ArrayList<Node>> entry: listOfConnectedNodes.entrySet()){
 			ListIterator<Node> lItr = entry.getValue().listIterator();
@@ -70,15 +72,15 @@ public class GMLReader {
 		}*/
 		}
 
-	private Node getFromListOfNodes(ArrayList<Node> listOfNodes, int num) {
+	private Node getFromListOfNodes(List<Node> listOfNodes2, int num) {
 		// TODO Auto-generated method stub
-		ListIterator<Node> litr5 = listOfNodes.listIterator();
+		ListIterator<Node> litr5 = listOfNodes2.listIterator();
 		Node temp = null;
 		while(litr5.hasNext() && !((temp = litr5.next()).getId() == num)){}
 		return temp;
 	}
 
-	private void containsNode(
+	/*private void containsNode(
 			LinkedHashMap<Integer, ArrayList<Integer>> listOfConnectedNodes2,
 			Node node1,Node node2) {
 		// TODO Auto-generated method stub
@@ -106,7 +108,7 @@ public class GMLReader {
 			listOfConnectedNodes2.put(node1.getId(), newList1);
 			listOfConnectedNodes2.put(node2.getId(), newList2);
 		}
-	}
+	}*/
 
 	public ArrayList<Edge> getListOfEdges() {
 		return listOfEdges;
@@ -116,21 +118,20 @@ public class GMLReader {
 		this.listOfEdges = listOfEdges;
 	}
 
-	public LinkedHashMap<Integer, ArrayList<Integer>> getListOfConnectedNodes() {
-		return listOfConnectedNodes;
-	}
-
-	public void setListOfConnectedNodes(
-			LinkedHashMap<Integer, ArrayList<Integer>> listOfConnectedNodes) {
-		this.listOfConnectedNodes = listOfConnectedNodes;
-	}
-
-	public ArrayList<Node> getListOfNodes() {
+	public List<Node> getListOfNodes() {
 		return listOfNodes;
 	}
 
-	public void setListOfNodes(ArrayList<Node> listOfNodes) {
+	public void setListOfNodes(List<Node> listOfNodes) {
 		this.listOfNodes = listOfNodes;
+	}
+
+	public List<Integer> getListOfNodesInInteger() {
+		return listOfNodesInInteger;
+	}
+
+	public void setListOfNodesInInteger(List<Integer> listOfNodesInInteger) {
+		this.listOfNodesInInteger = listOfNodesInInteger;
 	}
 		
 		
