@@ -2,7 +2,8 @@ package com.social.servlets;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.text.NumberFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -18,6 +19,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 @SuppressWarnings("serial")
 public class GraphUploadServlet  extends HttpServlet {
@@ -31,9 +33,12 @@ public class GraphUploadServlet  extends HttpServlet {
 		FileItem fileItem = processUpload(request, factory);
 		if (fileItem != null){
 			Map<String, String> returnValues = parseGraphFile(fileItem);
-			returnValues.put("fileName", fileItem.getName());
 			Gson gson = new Gson(); 
-			response.getWriter().print(gson.toJson(returnValues));
+			
+			JsonObject jsonObject = new JsonObject();
+			jsonObject.add("fileName",  gson.toJsonTree(fileItem.getName()));
+			jsonObject.add("displayData",  gson.toJsonTree(returnValues));
+			response.getWriter().print(jsonObject.toString());
 		} else {
 			response.getWriter().print("No File found");
 		}
@@ -79,10 +84,12 @@ public class GraphUploadServlet  extends HttpServlet {
 						fromNode > totalNodes ? fromNode : totalNodes;
 			totalEdges++;
 		}
+		double graphDensity = (totalEdges * 1d) / (totalNodes *(totalNodes -1));
 		
-		Map<String, String> returnValues = new HashMap<String, String>();
+		Map<String, String> returnValues = new LinkedHashMap<String, String>();
 		returnValues.put("totalNodes", String.valueOf(totalNodes));
 		returnValues.put("totalEdges", String.valueOf(totalEdges));
+		returnValues.put("graphDensity", String.format("%.3f", graphDensity));
 		return returnValues;
 	}
 	
