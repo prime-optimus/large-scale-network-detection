@@ -2,7 +2,10 @@ package com.social.servlets;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +17,9 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import com.google.gson.Gson;
+
+@SuppressWarnings("serial")
 public class GraphUploadServlet  extends HttpServlet {
 
 	@Override
@@ -24,7 +30,10 @@ public class GraphUploadServlet  extends HttpServlet {
 		
 		FileItem fileItem = processUpload(request, factory);
 		if (fileItem != null){
-			response.getWriter().print(fileItem.getName());
+			Map<String, String> returnValues = parseGraphFile(fileItem);
+			returnValues.put("fileName", fileItem.getName());
+			Gson gson = new Gson(); 
+			response.getWriter().print(gson.toJson(returnValues));
 		} else {
 			response.getWriter().print("No File found");
 		}
@@ -56,6 +65,25 @@ public class GraphUploadServlet  extends HttpServlet {
 		File repository = new File("f:\\temp");
 		factory.setRepository(repository);
 		return factory;
+	}
+
+	@SuppressWarnings("resource")
+	private Map<String, String> parseGraphFile(FileItem fileItem) throws IOException {
+		Scanner in = new Scanner(fileItem.getInputStream());
+		
+		int totalNodes=0, totalEdges=0;
+		while(in.hasNext()){
+			int fromNode = in.nextInt(), toNode=in.nextInt();
+			totalNodes = toNode > fromNode ? 
+					toNode > totalNodes ? toNode : totalNodes :   
+						fromNode > totalNodes ? fromNode : totalNodes;
+			totalEdges++;
+		}
+		
+		Map<String, String> returnValues = new HashMap<String, String>();
+		returnValues.put("totalNodes", String.valueOf(totalNodes));
+		returnValues.put("totalEdges", String.valueOf(totalEdges));
+		return returnValues;
 	}
 	
 }
