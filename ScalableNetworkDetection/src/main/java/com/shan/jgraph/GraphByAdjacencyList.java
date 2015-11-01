@@ -1,19 +1,14 @@
 package com.shan.jgraph;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import jxl.Sheet;
-import jxl.Workbook;
 import jxl.read.biff.BiffException;
 
 public class GraphByAdjacencyList {
@@ -22,29 +17,21 @@ public class GraphByAdjacencyList {
 	Map<Integer, ArrayList<Integer>> mapOfNodes = new LinkedHashMap<Integer, ArrayList<Integer>>();
 	List<Integer> listOfNodes = new ArrayList<Integer>();
 	List<Edge> listOfEdges = new ArrayList<Edge>();
-	GraphByAdjacencyList() throws BiffException, IOException{
-		fillAdjacencyListByEdges();
+	
+	public GraphByAdjacencyList(String fileName) throws BiffException, IOException{
+		graphAsListOfPairOfStrings(fileName);
 	}	
 	
-	public void fillAdjacencyListByEdges() throws BiffException, IOException{
-		
-		//graphAsNodesAndEdges();
-		graphAsListOfPairOfStrings();
-	}
+	private void graphAsListOfPairOfStrings(String fileName) throws BiffException, IOException {
 
-	private void graphAsListOfPairOfStrings() throws BiffException, IOException {
-		// TODO Auto-generated method stub
-
-		String filepath = "C:\\Users\\SHANDEMETZ\\Downloads\\Compressed\\facebook_combined.txt\\facebook_combined.txt";;
+		String filepath = "f:\\temp\\"+fileName+".tmp";
 		
 		
 		System.out.println(filepath);
 		  FileReader f = new FileReader(filepath);
 		  BufferedReader br = new BufferedReader(f);
 		  String line;
-		  Node key;
 		  List<String> listOfStrings;
-		  ArrayList<Integer> adjacentNodes;
 		  while((line = br.readLine())!= null){
 			  listOfStrings = Arrays.asList(line.split(" "));
 			  int startingNode = Integer.parseInt(listOfStrings.get(0));

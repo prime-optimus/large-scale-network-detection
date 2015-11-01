@@ -20,6 +20,7 @@
 <!-- Custom styling plus plugins -->
 <link href="css/custom.css" rel="stylesheet">
 <link href="css/icheck/flat/green.css" rel="stylesheet">
+<link href="css/custom/d3.css" rel="stylesheet">
 
 
 <script src="js/jquery.min.js"></script>
@@ -250,8 +251,7 @@
 			<!-- /top navigation -->
 
 			<!-- page content -->
-			<div class="right_col" role="main">
-
+			<div class="right_col" role="main">				
 				<div class="">
 					<div class="page-title">
 						<div class="title_left">
@@ -272,47 +272,119 @@
 						</div>
 					</div>
 					<div class="clearfix"></div>
-					<div class="col-md-12 col-sm-12 col-xs-12">
-						<div class="row">
-							<div class="col-md-12 col-sm-12 col-xs-12">
-								<div class="x_panel">
-									<div class="x_title">
-										<h2>Dropzone multiple file uploader</h2>
-										<ul class="nav navbar-right panel_toolbox">
-											<li><a class="collapse-link"><i
-													class="fa fa-chevron-up"></i></a></li>
-											<li class="dropdown"><a href="#" class="dropdown-toggle"
-												data-toggle="dropdown" role="button" aria-expanded="false"><i
-													class="fa fa-wrench"></i></a>
-												<ul class="dropdown-menu" role="menu">
-													<li><a href="#">Settings 1</a></li>
-													<li><a href="#">Settings 2</a></li>
-												</ul></li>
-											<li><a class="close-link"><i class="fa fa-close"></i></a>
-											</li>
-										</ul>
-										<div class="clearfix"></div>
-									</div>
-									<div class="x_content">
 
-										<p>Drag multiple files to the box below for multi upload
-											or click to select files. This is for demonstration purposes
-											only, the files are not uploaded to any server.</p>
-										<form action="/network/api/graph/upload" id="graphUploadForm"
-											method="post" class="dropzone"
-											style="border: 1px solid #e5e5e5; height: 300px;"></form>
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="x_panel" id="graph_placeholder" style="display: none">
+								<div class="x_title">
+									<h2>Community Classification</h2>
+									<div class="clearfix"></div>
+								</div>
+								<div class="x_content">
 
-										<br /> <br /> <br /> <br />
+									
+								</div>
+							</div>								
+							<div>
+								<div class="row top_tiles"></div>
+							</div>
+							<div id="algorithm_table" class="" style="display: none">
+								<input id="fileName" type="hidden" value=""/>
+								<div class="row">
+
+									<div class="col-md-12 col-sm-12 col-xs-12">
+										<div style="height: 250px;" class="x_panel">
+											<div class="x_title">
+												<h2>Pricing Tables Design</h2>
+												<ul class="nav navbar-right panel_toolbox">
+													<li><a class="collapse-link"><i
+															class="fa fa-chevron-up"></i></a></li>
+													<li class="dropdown"><a aria-expanded="false"
+														role="button" data-toggle="dropdown"
+														class="dropdown-toggle" href="#"><i
+															class="fa fa-wrench"></i></a>
+														<ul role="menu" class="dropdown-menu">
+															<li><a href="#">Settings 1</a></li>
+															<li><a href="#">Settings 2</a></li>
+														</ul></li>
+													<li><a class="close-link"><i class="fa fa-close"></i></a>
+													</li>
+												</ul>
+												<div class="clearfix"></div>
+											</div>
+
+											<div class="x_content">
+												<div class="row">
+
+													<div class="col-md-12">
+													<!-- Empty price element -->
+														<div class="col-md-3 col-sm-6 col-xs-12">
+															
+
+														</div>
+
+														<!-- price element -->
+														<div class="animated flipInY col-md-3 col-sm-6 col-xs-12">
+															<div class="pricing">
+																<div class="title">
+																	<h2>Low-Degree Following <br>Algorithm</h2>
+																	<h1>Time</h1>
+
+																	<div class="pricing_footer">
+																		<a role="button" data-algo="1" class="btn btn-success btn-block"
+																			onclick="executeAlgorithm(this);">Execute !</a>
+
+																	</div>
+																</div>
+
+															</div>
+
+														</div>
+														<!-- price element -->
+														<div class="animated flipInY col-md-3 col-sm-6 col-xs-12">
+															<div class="pricing">
+																<div class="title">
+																	<h2>Blondel-Louvain<br/>algorithm</h2>
+																	<h1>Time</h1>
+
+																	<div class="pricing_footer">
+																		<a role="button" data-algo="2" class="btn btn-success btn-block"
+																			onclick="executeAlgorithm(this);">Execute !</a>
+
+																	</div>
+																</div>
+
+															</div>
+
+														</div>
+													</div>
+
+												</div>
+											</div>
+
+										</div>
 									</div>
+								</div>
+							</div>
+							<div class="x_panel">
+								<div class="x_title">
+									<h2>Graph file uploader</h2>
+									<div class="clearfix"></div>
+								</div>
+								<div class="x_content">
+
+									<p>Upload graph file by either dragging or selecting the file on the dropzone.</p>
+									<form action="/network/api/graph/upload" id="graphUploadForm"
+										method="post" class="dropzone"
+										style="border: 1px solid #e5e5e5; height: 300px;"></form>
+
+									<br /> <br /> <br /> <br />
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="col-md-12 col-sm-12 col-xs-12">
-						<div class="row top_tiles"></div>
-					</div>
 				</div>
-			</div>
+
 				<!-- footer content -->
 				<footer>
 					<div class="">
@@ -354,7 +426,9 @@
 	<!-- dropzone -->
 	<script src="js/dropzone/dropzone.js"></script>
 	<script src="js/custom/dropzone_helper.js"></script>
+	<script src="js/custom/algorithm.js"></script>
 	<script src="js/custom/underscore_min.js"></script>
+	<script src="js/custom/d3.min.js"></script>
 
 	<script type="text/template" id="graphData">
 		<% var labels ={'totalNodes':'Total Nodes',
@@ -382,7 +456,6 @@
 
 		
 	</script>
-
 </body>
 
 </html>

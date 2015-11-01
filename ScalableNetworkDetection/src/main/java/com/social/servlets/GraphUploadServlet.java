@@ -2,9 +2,8 @@ package com.social.servlets;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.NumberFormat;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -17,6 +16,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -30,13 +30,15 @@ public class GraphUploadServlet  extends HttpServlet {
 		
 		DiskFileItemFactory factory = createDiskFileItemFactory();
 		
-		FileItem fileItem = processUpload(request, factory);
-		if (fileItem != null){
+		FileItem fileItem = processUploadRequest(request, factory);
+		String fileName = writeToDisk(fileItem);
+		
+		if (StringUtils.isNotEmpty(fileName)){
 			Map<String, String> returnValues = parseGraphFile(fileItem);
 			Gson gson = new Gson(); 
 			
 			JsonObject jsonObject = new JsonObject();
-			jsonObject.add("fileName",  gson.toJsonTree(fileItem.getName()));
+			jsonObject.add("fileName",  gson.toJsonTree(fileName));
 			jsonObject.add("displayData",  gson.toJsonTree(returnValues));
 			response.getWriter().print(jsonObject.toString());
 		} else {
@@ -44,7 +46,19 @@ public class GraphUploadServlet  extends HttpServlet {
 		}
 	}
 
-	private FileItem processUpload(HttpServletRequest request,
+	private String writeToDisk(FileItem fileItem) {
+		String fileName = StringUtils.EMPTY;
+		
+		try {
+			fileName = String.valueOf(System.currentTimeMillis());
+			fileItem.write(new File("f:\\temp\\" + fileName + ".tmp"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fileName;
+	}
+
+	private FileItem processUploadRequest(HttpServletRequest request,
 			DiskFileItemFactory factory) {
 		FileItem fileItem = null;
 		
@@ -53,8 +67,12 @@ public class GraphUploadServlet  extends HttpServlet {
 		
 		// Parse the request
 		try {
-			List<FileItem> items = upload.parseRequest(request);
-			fileItem = items.get(0);
+			Iterator<FileItem> iterator = upload.parseRequest(request).iterator();
+			
+			fileItem = iterator.next();
+			while(iterator.hasNext() && fileItem.isFormField()){
+				fileItem = iterator.next();
+			}
 		} catch (FileUploadException e) {
 			e.printStackTrace();
 		}

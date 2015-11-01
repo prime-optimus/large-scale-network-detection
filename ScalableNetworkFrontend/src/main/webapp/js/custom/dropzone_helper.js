@@ -8,6 +8,9 @@ Dropzone.options.graphUploadForm = {
 			var template = _.template(temp);
 			var html = template(response.displayData);
 			$(".top_tiles").html(html);
+			
+			$("#fileName").val(response.fileName);
+			$("#algorithm_table").show();
 		});
 	}
 };

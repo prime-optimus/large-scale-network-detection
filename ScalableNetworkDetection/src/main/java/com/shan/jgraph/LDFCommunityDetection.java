@@ -4,8 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -33,25 +33,25 @@ public class LDFCommunityDetection {
 	 */
 	public static void main(String[] args) throws BiffException, IOException {
 
-		SolveGraphByAdjacencyList();
+		//SolveGraphByAdjacencyList();
 		// TODO Auto-generated method stub
 
 	}
 
-	private static void SolveGraphByAdjacencyList() throws BiffException,
+	public static String SolveGraphByAdjacencyList(String fileName) throws BiffException,
 			IOException {
 
 		// TODO Auto-generated method stub
 		long startTime = System.currentTimeMillis();
-		GraphByAdjacencyList g1 = new GraphByAdjacencyList();
+		GraphByAdjacencyList g1 = new GraphByAdjacencyList(fileName);
 		List<Integer> listOfNodes = g1.getListOfNodes();
 
 		List<Edge> listOfEdges = g1.getListOfEdges();
-		LDFLabelNodes(listOfEdges, listOfNodes);
-		System.out.println(System.currentTimeMillis() - startTime);
+		return LDFLabelNodes(listOfEdges, listOfNodes);
+		//System.out.println(System.currentTimeMillis() - startTime);
 	}
 
-	private static void LDFLabelNodes(List<Edge> listOfEdges,
+	private static String LDFLabelNodes(List<Edge> listOfEdges,
 			List<Integer> listOfNodes) throws IOException {
 		// TODO Auto-generated method stub
 
@@ -84,10 +84,10 @@ public class LDFCommunityDetection {
 
 		}
 
-		CreateCommunities(listOfEdges, leaders, members, orbiters);
+		return CreateCommunities(listOfEdges, leaders, members, orbiters);
 	}
 
-	private static void CreateCommunities(List<Edge> listOfEdges,
+	private static String CreateCommunities(List<Edge> listOfEdges,
 			List<Integer> leaders, List<Integer> members, List<Integer> orbiters)
 			throws IOException {
 		// TODO Auto-generated method stub
@@ -114,8 +114,9 @@ public class LDFCommunityDetection {
 			int group = leaders.indexOf(parents.get(parents.get(oNode)));
 			communities.put(oNode, group);
 		}
-		WriteCommunitiesInJSON(listOfEdges, communities, runningJSONVar);
-		if (i > 100) {
+		return WriteCommunitiesInJSON(listOfEdges, communities, runningJSONVar);
+		
+		/*if (i > 100) {
 			for (Entry<Integer, Integer> entry : communities.entrySet()) {
 				ListIterator<Integer> connectedNodesItr = getListOfNodesConnected(
 						entry.getKey(), listOfEdges).listIterator();
@@ -148,16 +149,15 @@ public class LDFCommunityDetection {
 			}
 			runningJSONVar++;
 			LDFLabelNodes(compressedEdgeList, compressedNodesList);
-		}
+		}*/
 
 	}
 
-	private static void WriteCommunitiesInJSON(List<Edge> listOfEdges,
+	private static String WriteCommunitiesInJSON(List<Edge> listOfEdges,
 			Map<Integer, Integer> communities, int i) throws IOException {
 		// TODO Auto-generated method stub
 
-		FileWriter fw = new FileWriter(new File("myfbnet" + runningJSONVar
-				+ ".json"));
+		StringWriter fw = new StringWriter();
 		BufferedWriter bw = new BufferedWriter(fw);
 		bw.write("{" + "\n");
 		bw.write("\t\"nodes\":[" + "\n");
@@ -174,12 +174,12 @@ public class LDFCommunityDetection {
 		int mapItr = 0;
 		for (Entry<Integer, Integer> entry : list) {
 			if (mapItr < list.size() - 1) {
-				bw.write("\t\t{\"id\":" + entry.getKey() + ",\"name\":"
-						+ entry.getKey() + ",\"group\":" + entry.getValue()
+				bw.write("\t\t{\"id\":" + (entry.getKey()-1) + ",\"name\":"
+						+ (entry.getKey()-1) + ",\"group\":" + entry.getValue()
 						+ "}," + "\n");
 			} else {
-				bw.write("\t\t{\"id\":" + entry.getKey() + ",\"name\":"
-						+ entry.getKey() + ",\"group\":" + entry.getValue()
+				bw.write("\t\t{\"id\":" + (entry.getKey()-1) + ",\"name\":"
+						+ (entry.getKey()-1) + ",\"group\":" + entry.getValue()
 						+ "}" + "\n");
 			}
 
@@ -192,12 +192,12 @@ public class LDFCommunityDetection {
 		while (edgeItr.hasNext()) {
 			Edge e = edgeItr.next();
 			if (edgeItr.nextIndex() < listOfEdges.size()) {
-				bw.write("\t\t{\"source\":" + e.getStartingNode().getId()
-						+ ",\"target\":" + e.getEndingNode().getId() + "},"
+				bw.write("\t\t{\"source\":" + (e.getStartingNode().getId()-1)
+						+ ",\"target\":" + (e.getEndingNode().getId()-1) + "},"
 						+ "\n");
 			} else {
-				bw.write("\t\t{\"source\":" + e.getStartingNode().getId()
-						+ ",\"target\":" + e.getEndingNode().getId() + "}"
+				bw.write("\t\t{\"source\":" + (e.getStartingNode().getId()-1)
+						+ ",\"target\":" + (e.getEndingNode().getId()-1) + "}"
 						+ "\n");
 			}
 
@@ -206,7 +206,7 @@ public class LDFCommunityDetection {
 		bw.write("}" + "\n");
 		bw.write("");
 		bw.close();
-
+		return fw.toString();
 	}
 
 	private static Edge containsEdge(ArrayList<Edge> compressedEdgeList,
