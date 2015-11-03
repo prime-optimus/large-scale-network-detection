@@ -42,7 +42,7 @@ public class LDFCommunityDetection {
 			IOException {
 
 		// TODO Auto-generated method stub
-		long startTime = System.currentTimeMillis();
+		//long startTime = System.currentTimeMillis();
 		GraphByAdjacencyList g1 = new GraphByAdjacencyList(fileName);
 		List<Integer> listOfNodes = g1.getListOfNodes();
 
@@ -58,6 +58,7 @@ public class LDFCommunityDetection {
 		List<Integer> leaders = new ArrayList<Integer>();
 		List<Integer> members = new ArrayList<Integer>();
 		List<Integer> orbiters = new ArrayList<Integer>();
+		
 		List<Integer> tempList;
 		ListIterator<Integer> nodeItr = listOfNodes.listIterator();
 		int d = 20;
@@ -83,7 +84,6 @@ public class LDFCommunityDetection {
 			}
 
 		}
-
 		return CreateCommunities(listOfEdges, leaders, members, orbiters);
 	}
 
