@@ -20,7 +20,8 @@
 <!-- Custom styling plus plugins -->
 <link href="css/custom.css" rel="stylesheet">
 <link href="css/icheck/flat/green.css" rel="stylesheet">
-<link href="css/custom/d3.css" rel="stylesheet">
+<!-- <link href="css/custom/d3.css" rel="stylesheet"> -->
+<link href="css/custom/vis.min.css" rel="stylesheet">
 
 
 <script src="js/jquery.min.js"></script>
@@ -274,13 +275,13 @@
 					<div class="clearfix"></div>
 
 					<div class="row">
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<div class="x_panel" id="graph_placeholder" style="display: none">
+						<div class="col-md-12 col-sm-12 col-xs-12">							
+							<div class="x_panel" id="graph_placeholder" style="display: none;">
 								<div class="x_title">
 									<h2>Community Classification</h2>
 									<div class="clearfix"></div>
 								</div>
-								<div class="x_content">
+								<div class="x_content"  id="graph_placeholder_content" style="height: 500px">
 
 									
 								</div>
@@ -289,13 +290,13 @@
 								<div class="row top_tiles"></div>
 							</div>
 							<div id="algorithm_table" class="" style="display: none">
-								<input id="fileName" type="hidden" value=""/>
+								<input id="fileName" name="fileName" type="hidden" value=""/>
+								<input id="totalNodes" name="totalNodes" type="hidden" value=""/>
 								<div class="row">
-
 									<div class="col-md-12 col-sm-12 col-xs-12">
 										<div style="height: 250px;" class="x_panel">
 											<div class="x_title">
-												<h2>Pricing Tables Design</h2>
+												<h2>Algorithm Selection</h2>
 												<ul class="nav navbar-right panel_toolbox">
 													<li><a class="collapse-link"><i
 															class="fa fa-chevron-up"></i></a></li>
@@ -428,7 +429,8 @@
 	<script src="js/custom/dropzone_helper.js"></script>
 	<script src="js/custom/algorithm.js"></script>
 	<script src="js/custom/underscore_min.js"></script>
-	<script src="js/custom/d3.min.js"></script>
+	<script src="js/custom/vis.min.js"></script>
+	<!-- <script src="js/custom/d3.min.js"></script> -->
 
 	<script type="text/template" id="graphData">
 		<% var labels ={'totalNodes':'Total Nodes',

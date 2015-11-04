@@ -10,6 +10,7 @@ Dropzone.options.graphUploadForm = {
 			$(".top_tiles").html(html);
 			
 			$("#fileName").val(response.fileName);
+			$("#totalNodes").val(response.displayData.totalNodes);
 			$("#algorithm_table").show();
 		});
 	}

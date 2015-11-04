@@ -1,10 +1,8 @@
 package com.social.servlets;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import com.google.gson.stream.JsonWriter;
 import com.social.generic.Node;
@@ -26,42 +25,28 @@ public class DispatcherServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String fileName = request.getParameter("fileName");
-		String totalVertices = "34";//request.getParameter("totalVertices");
-		if (StringUtils.isNotBlank(fileName) && StringUtils.isNotBlank(totalVertices)){
-			List<Node> adjacencyList = GraphUtils.getAdjacencyListForGraphFile(BASE_DIRECTORY + fileName + ".tmp", Integer.parseInt(totalVertices));
+		String totalNodes = request.getParameter("totalNodes");
+		
+		if (StringUtils.isNotBlank(fileName) && NumberUtils.isNumber(totalNodes)){
+			String filePath = BASE_DIRECTORY + fileName + ".tmp";
+			List<Node> adjacencyList = GraphUtils.getAdjacencyListForGraphFile(filePath, Integer.parseInt(totalNodes));
 			LowDegreeFolloingAlgorithm ldf = new LowDegreeFolloingAlgorithm(adjacencyList);
 			Map<Node, List<Node>> communities = ldf.detectCommunities();
-			Iterator<Entry<Node, List<Node>>> communitiesEntrySet = communities.entrySet().iterator();
-			
-			JsonWriter writer = new JsonWriter(response.getWriter());
-			writer.beginObject();
-			writer.name("response").value("success");
-						
-			writer.name("nodes");
-			writer.beginArray();
-			
-			while(communitiesEntrySet.hasNext()){
-				Entry<Node, List<Node>> nextCommunity = communitiesEntrySet.next();
-				
-				String groupName = nextCommunity.getKey().getStringId();
-				
-				for (Node node : nextCommunity.getValue()){
-					writer.beginObject();
-					
-					writer.name("name");
-					writer.value(node.getStringId());
-					
-					writer.name("group");
-					writer.value(groupName);
-					
-					writer.endObject();
-				}
-			}
-			writer.endArray();
-			writer.endObject();
-			writer.close();
+			writeCommunityResponseJson(response, communities, filePath);
 		}
 	}
+
+	private void writeCommunityResponseJson(HttpServletResponse response,
+			Map<Node, List<Node>> communities, String filePath) throws IOException {
+		JsonWriter writer = new JsonWriter(response.getWriter());
+		writer.beginObject();
+		GraphUtils.writeCommunityListToJson(writer, communities);
+		GraphUtils.writeEdgeListJsonForGraphFile(writer, filePath);
+		writer.endObject();
+		writer.close();
+	}
+
+	
 }
 /** try {
 	String list = LDFCommunityDetection.SolveGraphByAdjacencyList(request.getParameter("fileName"));
