@@ -60,7 +60,6 @@ public class LowDegreeFolloingAlgorithm {
 								node.setParent(otherEnd);
 							}
 						});
-		System.out.println("Size " + communities.size());
 		return communities;
 	}
 

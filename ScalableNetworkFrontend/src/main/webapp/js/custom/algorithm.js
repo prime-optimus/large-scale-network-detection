@@ -19,6 +19,7 @@ function executeAlgorithm(element){
 			  min: 10,
 			  max: 30
 			},
+			size: 12,
 			font: {
 			  size: 12,
 			  face: 'Tahoma'
@@ -31,7 +32,7 @@ function executeAlgorithm(element){
 			  type: 'continuous'
 			}
 		  },
-		  physics: false
+		  physics: true
 		};
 
 		var data = {nodes:graph.nodes, edges:graph.links};

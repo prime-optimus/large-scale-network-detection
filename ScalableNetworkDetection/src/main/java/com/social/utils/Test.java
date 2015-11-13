@@ -10,7 +10,6 @@ public class Test {
 
 	public static void main(String[] args) throws IOException {
 		readIPFromNIO();
-
 	}
 	
 	public static void readIPFromNIO() throws IOException{
