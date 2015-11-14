@@ -29,19 +29,21 @@ public class DispatcherServlet extends HttpServlet {
 		
 		if (StringUtils.isNotBlank(fileName) && NumberUtils.isNumber(totalNodes)){
 			String filePath = BASE_DIRECTORY + fileName + ".tmp";
-			List<Node> adjacencyList = GraphUtils.getAdjacencyListForGraphFile(filePath, Integer.parseInt(totalNodes));
+			List<Node> adjacencyList = GraphUtils.getAdjacencyListForGraphFile(filePath, Integer.parseInt(totalNodes) + 1);
 			LowDegreeFolloingAlgorithm ldf = new LowDegreeFolloingAlgorithm(adjacencyList);
 			Map<Node, List<Node>> communities = ldf.detectCommunities();
-			writeCommunityResponseJson(response, communities, filePath);
+			List<Node> compressedCommunity = GraphUtils.compressCommunityRepresentation(adjacencyList, communities.size());
+			writeCommunityResponseJson(response, compressedCommunity);
 		}
 	}
 
 	private void writeCommunityResponseJson(HttpServletResponse response,
-			Map<Node, List<Node>> communities, String filePath) throws IOException {
+			List<Node> communities) throws IOException {
 		JsonWriter writer = new JsonWriter(response.getWriter());
+		
 		writer.beginObject();
-		GraphUtils.writeCommunityListToJson(writer, communities);
-		GraphUtils.writeEdgeListJsonForGraphFile(writer, filePath);
+		GraphUtils.writeCommunityList(writer, communities);
+		GraphUtils.writeEdgeList(writer, communities);
 		writer.endObject();
 		writer.close();
 	}

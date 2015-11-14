@@ -15,7 +15,7 @@ import com.social.generic.Node;
 public class LowDegreeFolloingAlgorithm {
 
 	private List<Node> adjacencyList;
-	private long leaders, orbiters, members;
+	private int leaders, orbiters, members;
 
 	public LowDegreeFolloingAlgorithm(List<Node> adjacencyList) {
 		this.adjacencyList = adjacencyList;
@@ -38,13 +38,16 @@ public class LowDegreeFolloingAlgorithm {
 								Node otherEnd = firstEdge.get().getOtherEnd();
 
 								if (otherEnd.isLeader()) {
+									node.setCommunity(otherEnd.getCommunity());
 									communities.get(otherEnd).add(node);
 								} else {
-									this.leaders++;
 									ArrayList<Node> list = new ArrayList<>();
 									list.add(node);
 									list.add(otherEnd);
+									node.setCommunity(otherEnd.getCommunity());
+									otherEnd.setCommunity(this.leaders);
 									communities.put(otherEnd, list);
+									this.leaders++;
 								}
 
 								this.members++;
@@ -53,8 +56,10 @@ public class LowDegreeFolloingAlgorithm {
 								node.setParent(otherEnd);
 							} else if (CollectionUtils.isNotEmpty(neighbors)) {
 								Node otherEnd = neighbors.get(0).getOtherEnd();
+								System.out.println(otherEnd);
 								communities.get(otherEnd.getParent()).add(node);
-
+								node.setCommunity(otherEnd.getParent().getCommunity());
+								
 								this.orbiters++;
 								node.setOrbiter(true);
 								node.setParent(otherEnd);
