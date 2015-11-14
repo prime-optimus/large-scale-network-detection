@@ -1,7 +1,10 @@
 package com.social.servlets;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,6 +19,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.Gson;
@@ -51,7 +55,9 @@ public class GraphUploadServlet  extends HttpServlet {
 		
 		try {
 			fileName = String.valueOf(System.currentTimeMillis());
-			fileItem.write(new File("f:\\temp\\" + fileName + ".tmp"));
+			InputStream inputStream = fileItem.getInputStream();
+			OutputStream outputStream = new FileOutputStream("f:\\temp\\" + fileName + ".tmp");
+			IOUtils.copy(inputStream, outputStream);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
