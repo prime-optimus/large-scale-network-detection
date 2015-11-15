@@ -70,10 +70,6 @@ public class Node {
 		return isLeader() || isMember();
 	}
 	
-	public boolean isNotMemberOrOrbiter() {
-		return !isMember() && !isOrbiter();
-	}
-
 	public Node getParent() {
 		return parent;
 	}

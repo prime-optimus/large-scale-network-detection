@@ -31,8 +31,8 @@ public class LowDegreeFolloingAlgorithm {
 						node -> {
 							List<Edge> neighbors = node.getNeighbors();
 							Stream<Edge> nonMembers = neighbors.stream()
-									.filter(edge -> edge.getOtherEnd()
-											.isNotMemberOrOrbiter());
+									.filter(edge -> !edge.getOtherEnd()
+											.isMember());
 							Optional<Edge> firstEdge = nonMembers.findFirst();
 							if (firstEdge.isPresent()) {
 								Node otherEnd = firstEdge.get().getOtherEnd();
