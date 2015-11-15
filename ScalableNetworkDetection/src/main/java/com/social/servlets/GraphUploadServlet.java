@@ -108,6 +108,7 @@ public class GraphUploadServlet  extends HttpServlet {
 						fromNode > totalNodes ? fromNode : totalNodes;
 			totalEdges++;
 		}
+		totalNodes++; // since nodes are zero indexed
 		double graphDensity = (totalEdges * 1d) / (totalNodes *(totalNodes -1));
 		
 		Map<String, String> returnValues = new LinkedHashMap<String, String>();

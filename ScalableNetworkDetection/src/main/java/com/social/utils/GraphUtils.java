@@ -25,7 +25,7 @@ public class GraphUtils {
 		
 		Scanner in  = new Scanner(new FileInputStream(filePath));
 		while(in.hasNext()){
-			int e1= in.nextInt()-1, e2= in.nextInt()-1;
+			int e1= in.nextInt(), e2= in.nextInt();
 			adjacencyList.get(e1).addNeighbor(adjacencyList.get(e2));
 			adjacencyList.get(e2).addNeighbor(adjacencyList.get(e1));
 		}
@@ -68,7 +68,7 @@ public class GraphUtils {
 		
 		Scanner in  = new Scanner(new FileInputStream(filePath));
 		while(in.hasNext()){
-			int e1= in.nextInt()-1, e2= in.nextInt()-1;
+			int e1= in.nextInt(), e2= in.nextInt();
 			writer.beginObject();
 			
 			writer.name("from");
