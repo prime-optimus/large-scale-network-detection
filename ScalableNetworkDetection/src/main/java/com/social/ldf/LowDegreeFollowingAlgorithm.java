@@ -9,33 +9,30 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import com.social.generic.Edge;
-import com.social.generic.Node;
+import com.social.base.CommunityAlgorithm;
+import com.social.base.Edge;
+import com.social.base.Node;
+import com.social.generic.LDFNode;
 
-public class LowDegreeFolloingAlgorithm {
-
-	private List<Node> adjacencyList;
+public class LowDegreeFollowingAlgorithm extends CommunityAlgorithm {
 	private long leaders, orbiters, members;
 
-	public LowDegreeFolloingAlgorithm(List<Node> adjacencyList) {
-		this.adjacencyList = adjacencyList;
-	}
-
-	public Map<Node, List<Node>> detectCommunities() {
+	@Override
+	public Map<Node, List<Node>> detectCommunities(List<Node> adjacencyList) {
 		Map<Node, List<Node>> communities = new HashMap<>();
-
+		
 		adjacencyList
 				.stream()
+				.map(node -> (LDFNode)node)
 				.filter(node -> !node.isLeaderOrMember())
 				.forEach(
 						node -> {
 							List<Edge> neighbors = node.getNeighbors();
 							Stream<Edge> nonMembers = neighbors.stream()
-									.filter(edge -> !edge.getOtherEnd()
-											.isMember());
+									.filter(edge -> !isOtherEndMember(edge));
 							Optional<Edge> firstEdge = nonMembers.findFirst();
 							if (firstEdge.isPresent()) {
-								Node otherEnd = firstEdge.get().getOtherEnd();
+								LDFNode otherEnd = (LDFNode) firstEdge.get().getOtherEnd();
 
 								if (otherEnd.isLeader()) {
 									communities.get(otherEnd).add(node);
@@ -52,7 +49,7 @@ public class LowDegreeFolloingAlgorithm {
 								node.setMember(true);
 								node.setParent(otherEnd);
 							} else if (CollectionUtils.isNotEmpty(neighbors)) {
-								Node otherEnd = neighbors.get(0).getOtherEnd();
+								LDFNode otherEnd = (LDFNode) neighbors.get(0).getOtherEnd();
 								communities.get(otherEnd.getParent()).add(node);
 
 								this.orbiters++;
@@ -61,6 +58,15 @@ public class LowDegreeFolloingAlgorithm {
 							}
 						});
 		return communities;
+	}
+
+	@Override
+	public Class<? extends Node> getNodeClass() {
+		return LDFNode.class;
+	}
+
+	private boolean isOtherEndMember(Edge edge) {
+		return ((LDFNode)edge.getOtherEnd()).isMember();
 	}
 
 	public long getLeaders() {

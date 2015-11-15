@@ -7,12 +7,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Map.Entry;
+import java.util.Scanner;
 
 import com.google.gson.stream.JsonWriter;
-import com.social.generic.Node;
-import com.social.ldf.LowDegreeFolloingAlgorithm;
+import com.social.base.Node;
+import com.social.generic.LDFNode;
+import com.social.ldf.LowDegreeFollowingAlgorithm;
 
 public class GraphUtils {
 	
@@ -20,7 +21,7 @@ public class GraphUtils {
 			throws FileNotFoundException{
 		List<Node> adjacencyList = new ArrayList<Node>(totalNodes);
 		for (int i=0; i<totalNodes; i++){
-			adjacencyList.add(new Node(i));
+			adjacencyList.add(new LDFNode(i));
 		}
 		
 		Scanner in  = new Scanner(new FileInputStream(filePath));
@@ -85,10 +86,10 @@ public class GraphUtils {
 
 	public static void main(String[] args) throws FileNotFoundException {	
 		long startTime = System.currentTimeMillis();
-		String filePath = "F:\\temp\\1446410972095.tmp";
+		String filePath = "F:\\temp\\1447611049616.tmp";
 		List<Node> adjacencyList = getAdjacencyListForGraphFile(filePath, 34);
-		LowDegreeFolloingAlgorithm ldf = new LowDegreeFolloingAlgorithm(adjacencyList);
-		Map<Node, List<Node>> communities = ldf.detectCommunities();
+		LowDegreeFollowingAlgorithm ldf = new LowDegreeFollowingAlgorithm();
+		Map<Node, List<Node>> communities = ldf.detectCommunities(adjacencyList);
 		System.out.println(communities.size());
 		communities.forEach((key, value) -> {
 			System.out.println(key.getId() + " " + value.size());

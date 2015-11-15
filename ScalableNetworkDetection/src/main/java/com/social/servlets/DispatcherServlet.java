@@ -1,6 +1,8 @@
 package com.social.servlets;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.google.gson.stream.JsonWriter;
-import com.social.generic.Node;
-import com.social.ldf.LowDegreeFolloingAlgorithm;
+import com.social.base.CommunityAlgorithm;
+import com.social.base.Node;
+import com.social.ldf.LowDegreeFollowingAlgorithm;
 import com.social.utils.GraphUtils;
 
 @SuppressWarnings("serial")
@@ -26,12 +29,16 @@ public class DispatcherServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String fileName = request.getParameter("fileName");
 		String totalNodes = request.getParameter("totalNodes");
+		String algo = request.getParameter("algo");
 		
-		if (StringUtils.isNotBlank(fileName) && NumberUtils.isNumber(totalNodes)){
+		if (StringUtils.isNotBlank(fileName) && NumberUtils.isNumber(totalNodes) && algorithmMap.containsKey(algo)){
 			String filePath = BASE_DIRECTORY + fileName + ".tmp";
 			List<Node> adjacencyList = GraphUtils.getAdjacencyListForGraphFile(filePath, Integer.parseInt(totalNodes));
-			LowDegreeFolloingAlgorithm ldf = new LowDegreeFolloingAlgorithm(adjacencyList);
-			Map<Node, List<Node>> communities = ldf.detectCommunities();
+			
+			Class<? extends CommunityAlgorithm> communityAlgorithm = algorithmMap.get(algo);
+			CommunityAlgorithm algorithm = getCommunityAlgotihmInstance(communityAlgorithm);
+			
+			Map<Node, List<Node>> communities = algorithm.detectCommunities(adjacencyList);
 			writeCommunityResponseJson(response, communities, filePath);
 		}
 	}
@@ -45,12 +52,27 @@ public class DispatcherServlet extends HttpServlet {
 		writer.endObject();
 		writer.close();
 	}
+	 
+	private CommunityAlgorithm getCommunityAlgotihmInstance(
+			Class<? extends CommunityAlgorithm> communityAlgorithm) {
+		CommunityAlgorithm algorithm = null;
+		
+		try {
+			algorithm = communityAlgorithm.newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return algorithm;
+	}
 
+	 
 	
+	private static Map<String, Class<? extends CommunityAlgorithm>> algorithmMap;
+	static {
+		Map<String, Class<? extends CommunityAlgorithm>> tempMap = new HashMap<>();
+		tempMap.put("1", LowDegreeFollowingAlgorithm.class);
+		algorithmMap = Collections.unmodifiableMap(tempMap);
+	}
 }
-/** try {
-	String list = LDFCommunityDetection.SolveGraphByAdjacencyList(request.getParameter("fileName"));
-	response.getWriter().write(list);
-} catch (BiffException e) {
-	e.printStackTrace();
-}*/

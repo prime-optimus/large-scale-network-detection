@@ -1,4 +1,4 @@
-package com.social.generic;
+package com.social.base;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,9 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class Node {
 	private int id;
 	private List<Edge> neighbors;
-	private boolean leader, member, orbiter;
-	private Node parent;
-	
+
 	public Node(int id) {
 		this.id = id;
 	}
@@ -36,48 +34,12 @@ public class Node {
 	public List<Edge> getNeighbors() {
 		return neighbors == null ? Collections.emptyList() : neighbors;
 	}
-
+	
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
-
-	public boolean isLeader() {
-		return leader;
-	}
-
-	public void setLeader(boolean leader) {
-		this.leader = leader;
-	}
-
-	public boolean isMember() {
-		return member;
-	}
-
-	public void setMember(boolean member) {
-		this.member = member;
-	}
-
-	public boolean isOrbiter() {
-		return orbiter;
-	}
-
-	public void setOrbiter(boolean orbiter) {
-		this.orbiter = orbiter;
-	}
-
-	public boolean isLeaderOrMember() {
-		return isLeader() || isMember();
-	}
 	
-	public Node getParent() {
-		return parent;
-	}
-
-	public void setParent(Node parent) {
-		this.parent = parent;
-	}
-
 	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this.getId(), false);
