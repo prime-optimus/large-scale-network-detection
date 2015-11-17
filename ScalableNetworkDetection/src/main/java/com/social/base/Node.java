@@ -1,7 +1,6 @@
 package com.social.base;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -10,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class Node {
 	private int id;
 	private List<Edge> neighbors;
+	private int community;
 
 	public Node(int id) {
 		this.id = id;
@@ -23,16 +23,28 @@ public class Node {
 		return String.valueOf(id);
 	}
 
-	public boolean addNeighbor(Node node) {
+	public int getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(int community) {
+		this.community = community;
+	}
+
+	public boolean addNeighbor(Node node){
+		boolean result = false;
+		
+		Edge edge = new Edge(node);
 		if(neighbors == null){
 			neighbors = new ArrayList<>();
+		} else if(!neighbors.contains(edge)){
+			result = neighbors.add(edge);
 		}
-		Edge edge = new Edge(node);
-		return neighbors.add(edge);
+		return result;
 	}
 
 	public List<Edge> getNeighbors() {
-		return neighbors == null ? Collections.emptyList() : neighbors;
+		return neighbors == null ? new ArrayList<>() : neighbors;
 	}
 	
 	@Override

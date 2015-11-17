@@ -2,7 +2,7 @@ package com.social.generic;
 
 import com.social.base.Node;
 
-public class LDFNode extends Node{
+public class LDFNode extends Node {
 	public LDFNode(int id) {
 		super(id);
 	}

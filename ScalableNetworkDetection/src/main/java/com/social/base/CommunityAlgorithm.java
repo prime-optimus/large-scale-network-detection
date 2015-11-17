@@ -1,7 +1,6 @@
 package com.social.base;
 
 import java.util.List;
-import java.util.Map;
 
 public abstract class CommunityAlgorithm {
 	
@@ -13,6 +12,6 @@ public abstract class CommunityAlgorithm {
 		return Edge.class;
 	}
 	
-	public abstract Map<Node, List<Node>> detectCommunities(List<Node> adjacencyList);
+	public abstract int detectCommunities(List<Node> adjacencyList);
 	
 }

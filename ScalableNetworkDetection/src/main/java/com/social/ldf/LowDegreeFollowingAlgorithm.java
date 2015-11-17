@@ -1,9 +1,7 @@
 package com.social.ldf;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -15,12 +13,10 @@ import com.social.base.Node;
 import com.social.generic.LDFNode;
 
 public class LowDegreeFollowingAlgorithm extends CommunityAlgorithm {
-	private long leaders, orbiters, members;
+	private int leaders, orbiters, members;
 
 	@Override
-	public Map<Node, List<Node>> detectCommunities(List<Node> adjacencyList) {
-		Map<Node, List<Node>> communities = new HashMap<>();
-		
+	public int detectCommunities(List<Node> adjacencyList) {
 		adjacencyList
 				.stream()
 				.map(node -> (LDFNode)node)
@@ -35,13 +31,18 @@ public class LowDegreeFollowingAlgorithm extends CommunityAlgorithm {
 								LDFNode otherEnd = (LDFNode) firstEdge.get().getOtherEnd();
 
 								if (otherEnd.isLeader()) {
-									communities.get(otherEnd).add(node);
+									node.setCommunity(otherEnd.getCommunity());	
+									//communities.get(otherEnd).add(node);
 								} else {
-									this.leaders++;
 									ArrayList<Node> list = new ArrayList<>();
 									list.add(node);
 									list.add(otherEnd);
-									communities.put(otherEnd, list);
+									
+									node.setCommunity(otherEnd.getCommunity());
+									otherEnd.setCommunity(this.leaders);
+									
+									//communities.put(otherEnd, list);
+									this.leaders++;
 								}
 
 								this.members++;
@@ -50,14 +51,15 @@ public class LowDegreeFollowingAlgorithm extends CommunityAlgorithm {
 								node.setParent(otherEnd);
 							} else if (CollectionUtils.isNotEmpty(neighbors)) {
 								LDFNode otherEnd = (LDFNode) neighbors.get(0).getOtherEnd();
-								communities.get(otherEnd.getParent()).add(node);
-
+								//communities.get(otherEnd.getParent()).add(node);
+								node.setCommunity(otherEnd.getParent().getCommunity());
+								
 								this.orbiters++;
 								node.setOrbiter(true);
 								node.setParent(otherEnd);
 							}
 						});
-		return communities;
+		return leaders;
 	}
 
 	@Override
@@ -69,15 +71,15 @@ public class LowDegreeFollowingAlgorithm extends CommunityAlgorithm {
 		return ((LDFNode)edge.getOtherEnd()).isMember();
 	}
 
-	public long getLeaders() {
+	public int getLeaders() {
 		return leaders;
 	}
 
-	public long getOrbiters() {
+	public int getOrbiters() {
 		return orbiters;
 	}
 
-	public long getMembers() {
+	public int getMembers() {
 		return members;
 	}
 

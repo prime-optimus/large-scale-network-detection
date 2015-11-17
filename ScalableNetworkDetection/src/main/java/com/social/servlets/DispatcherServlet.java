@@ -38,17 +38,19 @@ public class DispatcherServlet extends HttpServlet {
 			Class<? extends CommunityAlgorithm> communityAlgorithm = algorithmMap.get(algo);
 			CommunityAlgorithm algorithm = getCommunityAlgotihmInstance(communityAlgorithm);
 			
-			Map<Node, List<Node>> communities = algorithm.detectCommunities(adjacencyList);
-			writeCommunityResponseJson(response, communities, filePath);
+			int totalCommunities = algorithm.detectCommunities(adjacencyList);
+			
+			//List<Node> compressedCommunities = GraphUtils.compressCommunityRepresentation(adjacencyList, totalCommunities);
+			//writeCommunityResponseJson(response, compressedCommunities, filePath);
 		}
 	}
 
 	private void writeCommunityResponseJson(HttpServletResponse response,
-			Map<Node, List<Node>> communities, String filePath) throws IOException {
+			List<Node> communities, String filePath) throws IOException {
 		JsonWriter writer = new JsonWriter(response.getWriter());
 		writer.beginObject();
-		GraphUtils.writeCommunityListToJson(writer, communities);
-		GraphUtils.writeEdgeListJsonForGraphFile(writer, filePath);
+		GraphUtils.writeCommunityList(writer, communities);
+		GraphUtils.writeEdgeList(writer, communities);
 		writer.endObject();
 		writer.close();
 	}
