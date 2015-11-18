@@ -47,6 +47,10 @@ public class DispatcherServlet extends HttpServlet {
 			Map<Node, List<Node>> communities, String filePath) throws IOException {
 		JsonWriter writer = new JsonWriter(response.getWriter());
 		writer.beginObject();
+		
+		writer.name("total");
+		writer.value(String.valueOf(communities.size()));
+		
 		GraphUtils.writeCommunityListToJson(writer, communities);
 		GraphUtils.writeEdgeListJsonForGraphFile(writer, filePath);
 		writer.endObject();

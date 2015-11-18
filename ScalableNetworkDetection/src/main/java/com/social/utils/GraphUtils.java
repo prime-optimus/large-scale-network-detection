@@ -40,11 +40,11 @@ public class GraphUtils {
 		writer.beginArray();
 		
 		Iterator<Entry<Node, List<Node>>> communitiesEntrySet = communities.entrySet().iterator();
+		int i=-1;
 		while(communitiesEntrySet.hasNext()){
 			Entry<Node, List<Node>> nextCommunity = communitiesEntrySet.next();
 			
-			String groupName = nextCommunity.getKey().getStringId();
-			
+			String groupName = String.valueOf(i++);
 			for (Node node : nextCommunity.getValue()){
 				writer.beginObject();
 				
