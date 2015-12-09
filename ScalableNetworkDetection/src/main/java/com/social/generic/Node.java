@@ -26,15 +26,11 @@ public class Node {
 	}
 
 	public boolean addNeighbor(Node node) {
-		boolean result = false;
-		
 		Edge edge = new Edge(node);
 		if(neighbors == null){
 			neighbors = new ArrayList<>();
-		} else if(!neighbors.contains(edge)){
-			result = neighbors.add(edge);
-		}
-		return result;
+		} 
+		return neighbors.add(edge);
 	}
 	
 	public List<Edge> getNeighbors() {

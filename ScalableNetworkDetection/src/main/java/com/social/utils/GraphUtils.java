@@ -3,7 +3,6 @@ package com.social.utils;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 import com.google.gson.stream.JsonWriter;
-import com.social.generic.Edge;
 import com.social.generic.Node;
 import com.social.ldf.LowDegreeFolloingAlgorithm;
 
@@ -35,25 +33,7 @@ public class GraphUtils {
 		return adjacencyList;
 	}
 	
-	public static List<Node> compressCommunityRepresentation(List<Node> adjacencyList, int size) {
-		List<Node> communities = new ArrayList<Node>(size);
-		for (int i=0; i<size; i++){
-			communities.add(new Node(i));
-		}
-		
-		adjacencyList.forEach(node -> {
-			Node communityNode = communities.get(node.getCommunity());
-			
-			List<Edge> currentNeighbors = node.getNeighbors();
-			currentNeighbors.forEach(neighbor -> {
-				Node otherEndCommunity = communities.get(neighbor.getOtherEnd().getCommunity());
-				if (otherEndCommunity.getId() != communityNode.getId()){
-					communityNode.addNeighbor(otherEndCommunity);
-				}
-			});
-		});
-		return communities;
-	}
+	
 	
 	public static void writeCommunityList(JsonWriter writer, List<Node> communities) throws IOException {
 		writer.name("nodes");
@@ -165,23 +145,49 @@ public class GraphUtils {
 
 	public static void main(String[] args) throws IOException {	
 		long startTime = System.currentTimeMillis();
-		String filePath = "F:\\temp\\1447522891477.tmp";
-		List<Node> adjacencyList = getAdjacencyListForGraphFile(filePath, 75888);
+		String filePath = "F:\\temp\\1449437294103.tmp";
+		List<Node> adjacencyList = getAdjacencyListForGraphFile(filePath, 34);
+		
+		adjacencyList.forEach(node -> {
+			System.out.print(node.getId() + " :: ");
+			node.getNeighbors().forEach(edge -> {
+				System.out.print(edge.getOtherEnd().getId() + " ");
+			});
+			System.out.println();
+		});
+		
 		LowDegreeFolloingAlgorithm ldf = new LowDegreeFolloingAlgorithm(adjacencyList);
 		Map<Node, List<Node>> communities = ldf.detectCommunities();
-		List<Node> compressedCommunity = compressCommunityRepresentation(adjacencyList, communities.size());
+		
 		System.out.println(communities.size());
+		
 		communities.forEach((key, value) -> {
 			System.out.println(key.getId() + " " + value.size());
 		});
 		
+		List<Node> openCommunity = GraphCompressionUtils.openCommunity(communities, adjacencyList, 33);
+		
+		System.out.println(openCommunity.size());
+		openCommunity.forEach(node -> {
+			System.out.print(node.getId() + " :: ");
+			node.getNeighbors().forEach(edge -> {
+				System.out.print(edge.getOtherEnd().getId() + " ");
+			});
+			System.out.println();
+		});
+		
+		
+		/*List<Node> compressedCommunity = compressCommunityRepresentation(adjacencyList, communities.size());
 		JsonWriter writer = new JsonWriter(new PrintWriter(System.out));
+		//writer.setIndent(" ");
 		writer.beginObject();
 		writeCommunityList(writer, compressedCommunity);
 		writeEdgeList(writer, compressedCommunity);
 		writer.endObject();
-		writer.flush();
+		writer.close();*/
+		
 		System.out.println(System.currentTimeMillis() - startTime);
 	}
 
+	
 }

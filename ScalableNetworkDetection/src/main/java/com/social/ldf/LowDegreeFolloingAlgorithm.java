@@ -56,7 +56,7 @@ public class LowDegreeFolloingAlgorithm {
 								node.setParent(otherEnd);
 							} else if (CollectionUtils.isNotEmpty(neighbors)) {
 								Node otherEnd = neighbors.get(0).getOtherEnd();
-								System.out.println(otherEnd);
+								
 								communities.get(otherEnd.getParent()).add(node);
 								node.setCommunity(otherEnd.getParent().getCommunity());
 								
