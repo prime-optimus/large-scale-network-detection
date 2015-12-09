@@ -56,7 +56,7 @@ public class GraphUploadServlet  extends HttpServlet {
 		try {
 			fileName = String.valueOf(System.currentTimeMillis());
 			InputStream inputStream = fileItem.getInputStream();
-			OutputStream outputStream = new FileOutputStream("f:\\temp\\" + fileName + ".tmp");
+			OutputStream outputStream = new FileOutputStream(DispatcherServlet.BASE_DIRECTORY + fileName + ".tmp");
 			IOUtils.copy(inputStream, outputStream);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -91,7 +91,7 @@ public class GraphUploadServlet  extends HttpServlet {
 
 		// Configure a repository (to ensure a secure temp location is used)
 		//ServletContext servletContext = this.getServletConfig().getServletContext();
-		File repository = new File("f:\\temp");
+		File repository = new File(DispatcherServlet.BASE_DIRECTORY);
 		factory.setRepository(repository);
 		return factory;
 	}

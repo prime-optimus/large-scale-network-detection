@@ -34,7 +34,7 @@ public class Node {
 	}
 	
 	public List<Edge> getNeighbors() {
-		return neighbors == null ? new ArrayList<>() : neighbors;
+		return neighbors == null ? new ArrayList<Edge>() : neighbors;
 	}
 
 	@Override

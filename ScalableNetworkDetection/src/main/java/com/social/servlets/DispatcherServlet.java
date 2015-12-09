@@ -2,19 +2,22 @@ package com.social.servlets;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.google.gson.stream.JsonWriter;
+import com.social.generic.Edge;
 import com.social.generic.Node;
 import com.social.ldf.LowDegreeFolloingAlgorithm;
 import com.social.utils.GraphCompressionUtils;
@@ -25,7 +28,7 @@ import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 @SuppressWarnings("serial")
 public class DispatcherServlet extends HttpServlet {
-	private static final String BASE_DIRECTORY = "f:\\temp\\";
+	public static final String BASE_DIRECTORY = StringUtils.EMPTY;
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -40,8 +43,6 @@ public class DispatcherServlet extends HttpServlet {
 			} else {
 				handleCommunityOpenRequest(response, fileName, totalNodes); 
 			}
-			
-			
 		}
 	}
 
@@ -68,26 +69,34 @@ public class DispatcherServlet extends HttpServlet {
 
 	private void writeCommunityResponseJson(HttpServletResponse response,
 			List<Node> communities) throws IOException {
-		JsonWriter writer = new JsonWriter(response.getWriter());
+		response.addHeader("Content-Encoding", "gzip");
+		response.addHeader("Content-Type", "application/json");
+		
+		GZIPOutputStream gzipOutputStream = new GZIPOutputStream(response.getOutputStream());
+		JsonWriter writer = new JsonWriter(new PrintWriter(gzipOutputStream));
 		
 		Graph<Integer, String> communityGraph = new UndirectedSparseGraph<>();
-		IntStream.range(0, communities.size()).forEach(index -> {
-			communityGraph.addVertex(index);
-		});
+		for (Node node: communities){
+			if(CollectionUtils.isNotEmpty(node.getNeighbors())){
+				communityGraph.addVertex(node.getId());
+			}
+		}
 		
-		communities.forEach(node -> {
+		for (Node node: communities){
+			
 			int startVertex = node.getId();
 			
-			node.getNeighbors().forEach(edge -> {
+			for(Edge edge: node.getNeighbors()){
 				int endVertex = edge.getOtherEnd().getId();
 				String edgeLabel = node.getStringId() + ":" + edge.getOtherEnd().getStringId();
 				communityGraph.addEdge(edgeLabel, startVertex, endVertex);
-			});
-		});
+			}
+		}
+		
 		
 		writer.beginObject();
-		GraphUtils.writeCommunityList(writer, communities);
-		GraphUtils.writeEdgeList(writer, communities);
+		GraphUtils.writeCommunityList(writer, communityGraph);
+		GraphUtils.writeEdgeList(writer, communityGraph);
 		writer.endObject();
 		writer.close();
 	}

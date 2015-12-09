@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -23,48 +21,51 @@ public class LowDegreeFolloingAlgorithm {
 
 	public Map<Node, List<Node>> detectCommunities() {
 		Map<Node, List<Node>> communities = new HashMap<>();
+		
+		for(Node node: adjacencyList){
+			if(!node.isLeaderOrMember()){
+				List<Edge> neighbors = node.getNeighbors();
+				
+				Node firstNode = null; 
+				for(Edge neighbor: neighbors){
+					if(neighbor.getOtherEnd().isNotMemberOrOrbiter()){
+						firstNode = neighbor.getOtherEnd();
+						break;
+					}
+				}
+				
+				if (firstNode != null) {
+					Node otherEnd = firstNode;
 
-		adjacencyList
-				.stream()
-				.filter(node -> !node.isLeaderOrMember())
-				.forEach(
-						node -> {
-							List<Edge> neighbors = node.getNeighbors();
-							Stream<Edge> nonMembers = neighbors.stream()
-									.filter(edge -> edge.getOtherEnd()
-											.isNotMemberOrOrbiter());
-							Optional<Edge> firstEdge = nonMembers.findFirst();
-							if (firstEdge.isPresent()) {
-								Node otherEnd = firstEdge.get().getOtherEnd();
+					if (otherEnd.isLeader()) {
+						node.setCommunity(otherEnd.getCommunity());
+						communities.get(otherEnd).add(node);
+					} else {
+						ArrayList<Node> list = new ArrayList<>();
+						list.add(node);
+						list.add(otherEnd);
+						node.setCommunity(otherEnd.getCommunity());
+						otherEnd.setCommunity(this.leaders);
+						communities.put(otherEnd, list);
+						this.leaders++;
+					}
 
-								if (otherEnd.isLeader()) {
-									node.setCommunity(otherEnd.getCommunity());
-									communities.get(otherEnd).add(node);
-								} else {
-									ArrayList<Node> list = new ArrayList<>();
-									list.add(node);
-									list.add(otherEnd);
-									node.setCommunity(otherEnd.getCommunity());
-									otherEnd.setCommunity(this.leaders);
-									communities.put(otherEnd, list);
-									this.leaders++;
-								}
-
-								this.members++;
-								otherEnd.setLeader(true);
-								node.setMember(true);
-								node.setParent(otherEnd);
-							} else if (CollectionUtils.isNotEmpty(neighbors)) {
-								Node otherEnd = neighbors.get(0).getOtherEnd();
-								
-								communities.get(otherEnd.getParent()).add(node);
-								node.setCommunity(otherEnd.getParent().getCommunity());
-								
-								this.orbiters++;
-								node.setOrbiter(true);
-								node.setParent(otherEnd);
-							}
-						});
+					this.members++;
+					otherEnd.setLeader(true);
+					node.setMember(true);
+					node.setParent(otherEnd);
+				} else if (CollectionUtils.isNotEmpty(neighbors)) {
+					Node otherEnd = neighbors.get(0).getOtherEnd();
+					
+					communities.get(otherEnd.getParent()).add(node);
+					node.setCommunity(otherEnd.getParent().getCommunity());
+					
+					this.orbiters++;
+					node.setOrbiter(true);
+					node.setParent(otherEnd);
+				}
+			}
+		}
 		return communities;
 	}
 

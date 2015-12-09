@@ -5,7 +5,7 @@ function executeAlgorithm(element){
 	  type: 'GET',
 	  data: {'algo':algo,'fileName': $("#fileName").val(), 'totalNodes': $("#totalNodes").val()},
 	  success: function(response) {
-		var graph = $.parseJSON(response);	
+		var graph = response;	
 		$("#graph_placeholder").show();
 		
 		var container = document.getElementById('graph_placeholder_content');
@@ -39,7 +39,7 @@ function executeAlgorithm(element){
 		var network = new vis.Network(container, data, options);
 	  },
 	  error: function(e) {
-		alert("Sorry, Something went wrong!")
+		alert("Sorry, Something went wrong!");
 	  }
 	});
 }	
